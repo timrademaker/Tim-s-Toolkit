@@ -17,7 +17,7 @@ public:
 
     // Array of widgets
     UPROPERTY(Config, EditAnywhere, Category = LoadingScreen, Meta=(ToolTip="One of these widgets is randomly selected and shown when the game loads a new level", DisplayName="Loading Screen Widgets"))
-    TArray<TSubclassOf<UUserWidget>> m_LoadingScreenWidget;
+    TArray<TSubclassOf<UUserWidget>> m_LoadingScreenWidgets;
 
 private:
     static UTimsToolkitLoadingScreenSettings* m_EditorSettingsSingleton;
