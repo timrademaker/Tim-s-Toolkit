@@ -4,7 +4,6 @@
 
 #include "Modules/ModuleInterface.h"
 #include "ISettingsModule.h"
-#include "PropertyEditorModule.h"
 #include "Math/UnrealMathUtility.h"
 #include "MoviePlayer.h"
 #include "Blueprint/UserWidget.h"

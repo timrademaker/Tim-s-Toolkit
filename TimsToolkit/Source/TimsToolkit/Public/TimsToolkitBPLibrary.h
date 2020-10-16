@@ -30,4 +30,7 @@ class UTimsToolkitBPLibrary : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Is Editor", Tooltip = "Returns true if the function is executed from the editor", Category = "Tim's Toolkit"))
 	static bool IsEditor();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit"))
+	static void GetWorldExtent(const UWorld* World, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
 };
