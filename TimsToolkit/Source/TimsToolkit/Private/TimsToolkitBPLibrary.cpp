@@ -21,31 +21,17 @@ bool UTimsToolkitBPLibrary::IsEditor()
 #endif
 }
 
-void UTimsToolkitBPLibrary::GetWorldExtent(const UWorld* World, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter)
+void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter)
 {
-    if (!World)
+    if (!WorldContextObject)
     {
-        UE_LOG(LogTemp, Warning, TEXT("World invalid!"));
-        return;
-    }
-
-
-    ULevel* lvl = World->GetCurrentLevel();
-
-    if (!lvl)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Unable to get level from World!"));
+        UE_LOG(LogTemp, Warning, TEXT("Invalid world context object!"));
         return;
     }
 
     // Get actors
-    TArray<AActor*> allActors = lvl->Actors;
-
-    if (allActors.Num() == 0)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No actors in the level!"));
-        return;
-    }
+    TArray<AActor*> allActors;
+    UGameplayStatics::GetAllActorsOfClass(WorldContextObject, TSubclassOf<AActor>(AActor::StaticClass()), allActors);
 
     FVector origin;
     FVector extent;

@@ -32,5 +32,5 @@ public:
 	static bool IsEditor();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit"))
-	static void GetWorldExtent(const UWorld* World, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
+	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
 };
