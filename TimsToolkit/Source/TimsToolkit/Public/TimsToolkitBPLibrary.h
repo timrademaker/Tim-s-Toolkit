@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "DiscordEmbedStructs.h"
+
 #include "TimsToolkitBPLibrary.generated.h"
 
 /* 
@@ -29,6 +32,19 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Is Editor", Tooltip = "Returns true if the function is executed from the editor", Category = "Tim's Toolkit"))
 	static bool IsEditor();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit"))
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit", AutoCreateRefTerm = "IgnoreMaximumExtentsForClasses"))
 	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Attachments,EmbedFields,MessageContent,EmbedColor,Nickname,AvatarUrl"))
+	static void SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> EmbedFields, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
+	/* Requirements:
+	* Message content (optional)
+	* Nickname (optional)
+	* Avatar url (optional)
+	* Embeds (optional) (max 10) -> Embed and Field struct
+	* Files (optional)
+	* Color (optional)
+	* Footer (optional)
+	* Url? (optional)
+	*/
 };

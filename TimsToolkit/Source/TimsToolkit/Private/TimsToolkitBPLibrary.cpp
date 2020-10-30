@@ -81,3 +81,8 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
     // Get bounds of array
     UGameplayStatics::GetActorArrayBounds(allActors, true, WorldCenter, WorldExtent);
 }
+
+void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> EmbedFields, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
+{
+
+}
