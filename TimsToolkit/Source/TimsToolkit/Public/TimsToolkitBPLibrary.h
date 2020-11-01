@@ -35,8 +35,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit", AutoCreateRefTerm = "IgnoreMaximumExtentsForClasses"))
 	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Attachments,EmbedFields,MessageContent,EmbedColor,Nickname,AvatarUrl"))
-	static void SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> EmbedFields, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Attachments,Embeds,MessageContent,EmbedColor,Nickname,AvatarUrl"))
+	static void SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> Embeds, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
 	/* Requirements:
 	* Message content (optional)
 	* Nickname (optional)

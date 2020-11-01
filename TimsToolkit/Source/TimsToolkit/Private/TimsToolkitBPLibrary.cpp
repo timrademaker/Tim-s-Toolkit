@@ -82,7 +82,39 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
     UGameplayStatics::GetActorArrayBounds(allActors, true, WorldCenter, WorldExtent);
 }
 
-void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> EmbedFields, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
+void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> Embeds, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
 {
+    // Convert to json
+    FString messageJson = "{";
 
+    if (MessageContent.Len() > 0)
+    {
+        messageJson += "\"content\": \"" + MessageContent + "\",";
+    }
+
+    if (Nickname.Len() > 0)
+    {
+        messageJson += "\"username\": \"" + Nickname + "\",";
+    }
+
+    if (AvatarUrl.Len() > 0)
+    {
+        messageJson += "\"avatar_url\": \"" + AvatarUrl + "\",";
+    }
+
+    messageJson.RemoveFromEnd(",");
+    messageJson += "}";
+
+    // Send
+    FHttpModule& http = FHttpModule::Get();
+    TSharedRef <IHttpRequest> request = http.CreateRequest();
+    request->SetURL(WebhookUrl);
+    request->SetVerb("POST");
+    request->SetHeader("Content-Type", "application/json");
+    request->SetContentAsString(messageJson);
+    if (!request->ProcessRequest())
+    {
+        // Something went wrong while starting request processing
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Unable to start web request");
+    }
 }
