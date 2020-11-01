@@ -47,4 +47,10 @@ public:
 	* Footer (optional)
 	* Url? (optional)
 	*/
+
+private:
+	static void DiscordWebhookEmbedToJson(const FDiscordEmbed& Embed, FString& Json);
+	static void DiscordWebhookFieldToJson(const FDiscordEmbedField& Field, FString& Json);
+
+	static void ColorToInteger(const FColor& Color, FString& Integer);
 };

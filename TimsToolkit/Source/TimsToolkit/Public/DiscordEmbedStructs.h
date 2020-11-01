@@ -9,10 +9,10 @@ struct FDiscordEmbedField
     GENERATED_BODY();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        FString FieldTitle = "";
+        FString Name = "";
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        FString FieldContent = "";
+        FString Value = "";
 };
 
 
@@ -22,14 +22,17 @@ struct FDiscordEmbed
     GENERATED_BODY();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        FString EmbedTitle = "";
+        FString Title = "";
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        FString EmbedContent = "";
+        FString Content = "";
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (HideAlphaChannel))
+        FColor Color;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        FString EmbedColor = "";
-    
+        TArray<FDiscordEmbedField> Fields = {};
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        TArray<FDiscordEmbedField> EmbedFields;
+        FString Footer = "";
 };

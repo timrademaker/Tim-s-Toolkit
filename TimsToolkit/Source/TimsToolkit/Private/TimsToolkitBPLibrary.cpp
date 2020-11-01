@@ -4,6 +4,10 @@
 #include "TimsToolkit.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine.h"
+
+#include "HttpModule.h"
+#include "Interfaces/IHttpResponse.h"
 
 
 UTimsToolkitBPLibrary::UTimsToolkitBPLibrary(const FObjectInitializer& ObjectInitializer)
@@ -84,25 +88,48 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
 
 void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> Embeds, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
 {
-    // Convert to json
+    // Make json string
     FString messageJson = "{";
 
+    // Content
     if (MessageContent.Len() > 0)
     {
-        messageJson += "\"content\": \"" + MessageContent + "\",";
+        messageJson += "\"content\": \"" + MessageContent.ReplaceCharWithEscapedChar() + "\",";
     }
 
+    // Username
     if (Nickname.Len() > 0)
     {
-        messageJson += "\"username\": \"" + Nickname + "\",";
+        messageJson += "\"username\": \"" + Nickname.ReplaceCharWithEscapedChar() + "\",";
     }
 
+    // Avatar
     if (AvatarUrl.Len() > 0)
     {
-        messageJson += "\"avatar_url\": \"" + AvatarUrl + "\",";
+        messageJson += "\"avatar_url\": \"" + AvatarUrl.ReplaceCharWithEscapedChar() + "\",";
     }
 
-    messageJson.RemoveFromEnd(",");
+    // Embeds
+    if (Embeds.Num() > 0)
+    {
+        messageJson += "\"embeds\": [";
+
+        FString embedJson;
+        for (int i = 0; i < Embeds.Num(); ++i)
+        {
+            UTimsToolkitBPLibrary::DiscordWebhookEmbedToJson(Embeds[i], embedJson);
+
+            messageJson += embedJson + ",";
+        }
+
+        messageJson.RemoveFromEnd(",");
+        messageJson += "]";
+    }
+    else
+    {
+        messageJson.RemoveFromEnd(",");
+    }
+
     messageJson += "}";
 
     // Send
@@ -112,9 +139,103 @@ void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, cons
     request->SetVerb("POST");
     request->SetHeader("Content-Type", "application/json");
     request->SetContentAsString(messageJson);
+
     if (!request->ProcessRequest())
     {
         // Something went wrong while starting request processing
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Unable to start web request");
     }
+
+    request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool /*bConnectedSuccessfully*/)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Response->GetContentAsString());
+            UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
+        });
+}
+
+void UTimsToolkitBPLibrary::DiscordWebhookEmbedToJson(const FDiscordEmbed& Embed, FString& Json)
+{
+    Json = "";
+
+    // Title
+    Json = "{\"title\": \"" + Embed.Title.ReplaceCharWithEscapedChar() + "\",";
+
+    // Content
+    if (Embed.Content.Len() > 0)
+    {
+        Json += "\"content\": \"" + Embed.Content.ReplaceCharWithEscapedChar() + "\",";
+    }
+    
+    // Color
+    FString embedColor;
+    UTimsToolkitBPLibrary::ColorToInteger(Embed.Color, embedColor);
+    Json += "\"color\": " + embedColor + ",";
+
+    // Footer
+    if (Embed.Footer.Len() > 0)
+    {
+        Json += "\"footer\": {\"text\": \"" + Embed.Footer.ReplaceCharWithEscapedChar() + "\"},";
+    }
+
+    // Fields
+    if (Embed.Fields.Num() > 0)
+    {
+        if (Embed.Fields[0].Name.Len() > 0)
+        {
+            Json += "\"fields\": [";
+
+            FString fieldJson;
+            for (int i = 0; i < Embed.Fields.Num(); ++i)
+            {
+                UTimsToolkitBPLibrary::DiscordWebhookFieldToJson(Embed.Fields[i], fieldJson);
+                Json += fieldJson + ",";
+            }
+
+            Json.RemoveFromEnd(",");
+
+            Json += "]";
+        }
+        else
+        {
+            Json.RemoveFromEnd(",");
+        }
+    }
+    else
+    {
+        Json.RemoveFromEnd(",");
+    }
+
+    Json += "}";
+}
+
+void UTimsToolkitBPLibrary::DiscordWebhookFieldToJson(const FDiscordEmbedField& Field, FString& Json)
+{
+    Json = "";
+
+    if (Field.Name.Len() > 0)
+    {
+        // name
+        Json = "{\"name\": \"" + Field.Name.ReplaceCharWithEscapedChar() + "\",";
+        // value
+        if (Field.Value.Len() > 0)
+        {
+            Json += "\"value\": \"" + Field.Value.ReplaceCharWithEscapedChar() + "\"";
+        }
+        else
+        {
+            Json.RemoveFromEnd(",");
+        }
+
+        Json += "}";
+    }
+}
+
+void UTimsToolkitBPLibrary::ColorToInteger(const FColor& Color, FString& Integer)
+{
+    // Remove alpha from the color
+    FColor col2 = Color;
+    col2.A = 0;
+    
+    // Create integer string
+    Integer = FString::FromInt(col2.ToPackedARGB());
 }
