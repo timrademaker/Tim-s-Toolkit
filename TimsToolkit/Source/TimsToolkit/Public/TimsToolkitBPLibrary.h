@@ -35,11 +35,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit", AutoCreateRefTerm = "IgnoreMaximumExtentsForClasses"))
 	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send Message to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Embeds,MessageContent,Nickname,AvatarUrl"))
-	static void SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
-
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send File to Discord Webhook", Tooltip = "Send a file to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "MessageContent,Nickname,AvatarUrl"))
-	static void SendFileToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send Message to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Embeds,AttachmentPaths,MessageContent,Nickname,AvatarUrl"))
+	static void SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const TArray<FString> AttachmentPaths, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
 
 private:
 	static void DiscordWebhookEmbedToJson(const FDiscordEmbed& Embed, FString& Json);

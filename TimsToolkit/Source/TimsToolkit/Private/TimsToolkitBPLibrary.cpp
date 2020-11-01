@@ -86,7 +86,7 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
     UGameplayStatics::GetActorArrayBounds(allActors, true, WorldCenter, WorldExtent);
 }
 
-void UTimsToolkitBPLibrary::SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
+void UTimsToolkitBPLibrary::SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const TArray<FString> AttachmentPaths, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
 {
     // Make json string
     FString messageJson = "{";
@@ -139,84 +139,51 @@ void UTimsToolkitBPLibrary::SendMessageToDiscordWebhook(const FString& WebhookUr
     TSharedRef <IHttpRequest> request = http.CreateRequest();
     request->SetURL(WebhookUrl);
     request->SetVerb("POST");
-    request->SetHeader("Content-Type", "application/json");
-    request->SetContentAsString(messageJson);
 
-    if (!request->ProcessRequest())
+    if (AttachmentPaths.Num() == 0)
     {
-        // Something went wrong while starting request processing
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Unable to start web request");
+        request->SetHeader("Content-Type", "application/json");
+        request->SetContentAsString(messageJson);
     }
-
-    request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool /*bConnectedSuccessfully*/)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
-        }
-    );
-}
-
-void UTimsToolkitBPLibrary::SendFileToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
-{
-    FString messageJson;
-    
-    if (MessageContent.Len() > 0 || Nickname.Len() > 0 || AvatarUrl.Len() > 0)
+    else
     {
-        messageJson = "{";
+        const FString boundary = "-----BOUNDARY-----";
+        const FString midBoundary = "\r\n--" + boundary + "\r\n";
+        const FString endBoundary = "\r\n--" + boundary + "--\r\n";
 
-        // Content
-        if (MessageContent.Len() > 0)
+        request->SetHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+        TArray<uint8> req;
+
+        for (int i = 0; i < AttachmentPaths.Num(); ++i)
         {
-            messageJson += "\"content\": \"" + MessageContent.ReplaceCharWithEscapedChar() + "\",";
+            if (!FPaths::FileExists(AttachmentPaths[i]))
+            {
+                continue;
+            }
+
+            req.Append((uint8*)TCHAR_TO_UTF8(*midBoundary), midBoundary.Len());
+
+            const FString fileName = FPaths::GetCleanFilename(AttachmentPaths[i]);
+
+            const FString attachmentString = "Content-Disposition: form-data; name=\"file" + FString::FromInt(i) + "\"; filename=\"" + fileName + "\"\r\nContent-Type: application/octet-stream\r\n\r\n";
+
+            TArray<uint8> rawData;
+            FFileHelper::LoadFileToArray(rawData, *AttachmentPaths[i]);
+
+            req.Append((uint8*)TCHAR_TO_UTF8(*attachmentString), attachmentString.Len());
+            req.Append(rawData);
         }
 
-        // Username
-        if (Nickname.Len() > 0)
+        if (messageJson.Len() > 0)
         {
-            messageJson += "\"username\": \"" + Nickname.ReplaceCharWithEscapedChar() + "\",";
+            const FString payload = midBoundary + "Content-Disposition: form-data; name=\"payload_json\"\r\n\r\n" + messageJson + "\r\n";
+            req.Append((uint8*)TCHAR_TO_UTF8(*payload), payload.Len());
         }
 
-        // Avatar
-        if (AvatarUrl.Len() > 0)
-        {
-            messageJson += "\"avatar_url\": \"" + AvatarUrl.ReplaceCharWithEscapedChar() + "\",";
-        }
+        req.Append((uint8*)TCHAR_TO_UTF8(*endBoundary), endBoundary.Len());
 
-        messageJson.RemoveFromEnd(",");
-
-        messageJson += "}";
+        request->SetContent(req);
     }
-
-    FHttpModule& http = FHttpModule::Get();
-    TSharedRef <IHttpRequest> request = http.CreateRequest();
-    request->SetURL(WebhookUrl);
-    request->SetVerb("POST");
-
-    const FString boundary = "-----BOUNDARY-----";
-    const FString midBoundary = "\r\n--" + boundary + "\r\n";
-    const FString endBoundary = "\r\n--" + boundary + "--\r\n";
-
-    request->SetHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
-
-    // TODO: Make this work for more than a single file (and don't limit to images)
-    const FString attachmentString = midBoundary + "Content-Disposition: form-data; name=\"file\"; filename=\"file1.png\"\r\nContent-Type: image/png\r\n\r\n";
-
-    TArray<uint8> rawData;
-    FFileHelper::LoadFileToArray(rawData, *Attachments[0]);
-
-
-    TArray<uint8> req;
-    req.Append((uint8*)TCHAR_TO_UTF8(*attachmentString), attachmentString.Len());
-    req.Append(rawData);
-
-    if (messageJson.Len() > 0)
-    {
-        const FString payload = midBoundary + "Content-Disposition: form-data; name=\"payload_json\"\r\n\r\n" + messageJson + "\r\n";
-        req.Append((uint8*)TCHAR_TO_UTF8(*payload), payload.Len());
-    }
-    
-    req.Append((uint8*)TCHAR_TO_UTF8(*endBoundary), endBoundary.Len());
-
-    request->SetContent(req);
 
     if (!request->ProcessRequest())
     {
