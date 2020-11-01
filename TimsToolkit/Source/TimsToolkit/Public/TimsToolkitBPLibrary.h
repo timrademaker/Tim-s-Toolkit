@@ -2,8 +2,6 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 
-#include "DiscordEmbedStructs.h"
-
 #include "TimsToolkitBPLibrary.generated.h"
 
 /* 
@@ -34,13 +32,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit", AutoCreateRefTerm = "IgnoreMaximumExtentsForClasses"))
 	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
-
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Send Message to Discord Webhook", Tooltip = "Send a message to a Discord webhook", Category = "Tim's Toolkit", AutoCreateRefTerm = "Embeds,AttachmentPaths,MessageContent,Nickname,AvatarUrl"))
-	static void SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const TArray<FString> AttachmentPaths, const FString MessageContent = "", const FString Nickname = "", const FString AvatarUrl = "");
-
-private:
-	static void DiscordWebhookEmbedToJson(const FDiscordEmbed& Embed, FString& Json);
-	static void DiscordWebhookFieldToJson(const FDiscordEmbedField& Field, FString& Json);
-
-	static void ColorToInteger(const FColor& Color, FString& Integer);
 };
