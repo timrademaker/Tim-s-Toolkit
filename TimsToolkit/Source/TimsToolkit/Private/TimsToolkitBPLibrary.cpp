@@ -86,7 +86,7 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
     UGameplayStatics::GetActorArrayBounds(allActors, true, WorldCenter, WorldExtent);
 }
 
-void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const TArray<FDiscordEmbed> Embeds, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
+void UTimsToolkitBPLibrary::SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
 {
     // Make json string
     FString messageJson = "{";
@@ -131,6 +131,8 @@ void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, cons
     }
 
     messageJson += "}";
+    
+    UE_LOG(LogTemp, Warning, TEXT("%s"), *messageJson);
 
     // Send
     FHttpModule& http = FHttpModule::Get();
@@ -148,9 +150,85 @@ void UTimsToolkitBPLibrary::SendToDiscordWebhook(const FString& WebhookUrl, cons
 
     request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool /*bConnectedSuccessfully*/)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, Response->GetContentAsString());
             UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
-        });
+        }
+    );
+}
+
+void UTimsToolkitBPLibrary::SendFileToDiscordWebhook(const FString& WebhookUrl, const TArray<FString> Attachments, const FString MessageContent, const FString Nickname, const FString AvatarUrl)
+{
+    FString messageJson;
+    
+    if (MessageContent.Len() > 0 || Nickname.Len() > 0 || AvatarUrl.Len() > 0)
+    {
+        messageJson = "{";
+
+        // Content
+        if (MessageContent.Len() > 0)
+        {
+            messageJson += "\"content\": \"" + MessageContent.ReplaceCharWithEscapedChar() + "\",";
+        }
+
+        // Username
+        if (Nickname.Len() > 0)
+        {
+            messageJson += "\"username\": \"" + Nickname.ReplaceCharWithEscapedChar() + "\",";
+        }
+
+        // Avatar
+        if (AvatarUrl.Len() > 0)
+        {
+            messageJson += "\"avatar_url\": \"" + AvatarUrl.ReplaceCharWithEscapedChar() + "\",";
+        }
+
+        messageJson.RemoveFromEnd(",");
+
+        messageJson += "}";
+    }
+
+    FHttpModule& http = FHttpModule::Get();
+    TSharedRef <IHttpRequest> request = http.CreateRequest();
+    request->SetURL(WebhookUrl);
+    request->SetVerb("POST");
+
+    const FString boundary = "-----BOUNDARY-----";
+    const FString midBoundary = "\r\n--" + boundary + "\r\n";
+    const FString endBoundary = "\r\n--" + boundary + "--\r\n";
+
+    request->SetHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+    // TODO: Make this work for more than a single file (and don't limit to images)
+    const FString attachmentString = midBoundary + "Content-Disposition: form-data; name=\"file\"; filename=\"file1.png\"\r\nContent-Type: image/png\r\n\r\n";
+
+    TArray<uint8> rawData;
+    FFileHelper::LoadFileToArray(rawData, *Attachments[0]);
+
+
+    TArray<uint8> req;
+    req.Append((uint8*)TCHAR_TO_UTF8(*attachmentString), attachmentString.Len());
+    req.Append(rawData);
+
+    if (messageJson.Len() > 0)
+    {
+        const FString payload = midBoundary + "Content-Disposition: form-data; name=\"payload_json\"\r\n\r\n" + messageJson + "\r\n";
+        req.Append((uint8*)TCHAR_TO_UTF8(*payload), payload.Len());
+    }
+    
+    req.Append((uint8*)TCHAR_TO_UTF8(*endBoundary), endBoundary.Len());
+
+    request->SetContent(req);
+
+    if (!request->ProcessRequest())
+    {
+        // Something went wrong while starting request processing
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Unable to start web request");
+    }
+
+    request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool /*bConnectedSuccessfully*/)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
+        }
+    );
 }
 
 void UTimsToolkitBPLibrary::DiscordWebhookEmbedToJson(const FDiscordEmbed& Embed, FString& Json)
