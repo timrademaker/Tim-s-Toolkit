@@ -3,7 +3,11 @@
 #include "TimsToolkitLoadingScreenSettings.h"
 
 #include "Modules/ModuleInterface.h"
+
+#if WITH_EDITOR
 #include "ISettingsModule.h"
+#endif
+
 #include "Math/UnrealMathUtility.h"
 #include "MoviePlayer.h"
 #include "Blueprint/UserWidget.h"
@@ -16,12 +20,14 @@
 
 void FTimsToolkitLoadingScreenModule::StartupModule()
 {
+#if WITH_EDITOR
     // Register to editor
     ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
     if (SettingsModule)
     {
         SettingsModule->RegisterSettings("Project", "Plugins", "Tim's Toolkit", LOCTEXT("TimsToolkitName", "Tim's Toolkit"), LOCTEXT("TimsToolkitDescription", "Tim's Toolkit settings"), UTimsToolkitLoadingScreenSettings::Get());
     }
+#endif
     
     if (!IsRunningDedicatedServer() && FSlateApplication::IsInitialized())
     {
@@ -34,12 +40,14 @@ void FTimsToolkitLoadingScreenModule::StartupModule()
 
 void FTimsToolkitLoadingScreenModule::ShutdownModule()
 {
+#if WITH_EDITOR
     // Unregister from editor
     ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
     if (SettingsModule)
     {
         SettingsModule->UnregisterSettings("Project", "Plugins", "Tim's Toolkit");
     }
+#endif
 
     if (!IsRunningDedicatedServer())
     {

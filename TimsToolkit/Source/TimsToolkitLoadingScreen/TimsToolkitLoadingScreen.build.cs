@@ -38,18 +38,20 @@ public class TimsToolkitLoadingScreen : ModuleRules
 			}
 			);
 
-
-		PublicIncludePathModuleNames.AddRange(
-		new string[] {
-				"Settings"
-		}
-		);
-
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				"Settings"
-			}
-			);
+        
+        if(Target.Type == TargetRules.TargetType.Editor)
+        {
+            PublicIncludePathModuleNames.AddRange(
+                new string[] {
+                    "Settings"
+                }
+            );
+            
+            DynamicallyLoadedModuleNames.AddRange(
+                new string[] {
+                    "Settings"
+                }
+            );
+        }
 	}
 }
