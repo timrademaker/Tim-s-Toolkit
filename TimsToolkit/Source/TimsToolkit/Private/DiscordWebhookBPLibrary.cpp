@@ -14,12 +14,17 @@ UDiscordWebhookBPLibrary::UDiscordWebhookBPLibrary(const FObjectInitializer& Obj
 
 void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& WebhookUrl, const TArray<FDiscordEmbed> Embeds, const TArray<FString> AttachmentPaths, const FString& MessageContent, const FString& Nickname, const FString& AvatarUrl)
 {
+    FHttpModule& http = FHttpModule::Get();
+    if (!http.IsHttpEnabled())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HTTP is disabled!"));
+    }
+    
     // Make json string
     FString messageJson;
     UDiscordWebhookBPLibrary::ConstructMessageJson(MessageContent, Embeds, Nickname, AvatarUrl, messageJson);
 
     // Send
-    FHttpModule& http = FHttpModule::Get();
     TSharedRef <IHttpRequest> request = http.CreateRequest();
     request->SetURL(WebhookUrl);
     request->SetVerb("POST");
@@ -41,13 +46,15 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
 
     if (!request->ProcessRequest())
     {
-        // Something went wrong while starting request processing
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Unable to start web request");
+        UE_LOG(LogTemp, Warning, TEXT("Unable to start web request"));
     }
 
-    request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool /*bConnectedSuccessfully*/)
+    request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool ConnectedSuccessfully)
         {
-            UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
+            if (!ConnectedSuccessfully)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Issue while sending a message to a Discord webhook. Response: %s"), *Response->GetContentAsString());
+            }
         }
     );
 }
