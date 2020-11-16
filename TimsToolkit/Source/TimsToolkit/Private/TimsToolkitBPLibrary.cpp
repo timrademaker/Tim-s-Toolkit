@@ -3,7 +3,9 @@
 #include "TimsToolkitBPLibrary.h"
 #include "TimsToolkit.h"
 
+#include "Engine.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/UserInterfaceSettings.h"
 
 
 UTimsToolkitBPLibrary::UTimsToolkitBPLibrary(const FObjectInitializer& ObjectInitializer)
@@ -80,4 +82,45 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
 
     // Get bounds of array
     UGameplayStatics::GetActorArrayBounds(allActors, true, WorldCenter, WorldExtent);
+}
+
+void UTimsToolkitBPLibrary::SlateUnitsToPixelsFloat(const float& SlateUnits, float& Pixels)
+{
+    const float scale = GetViewportScale();
+    Pixels = SlateUnits * scale;
+}
+
+void UTimsToolkitBPLibrary::SlateUnitsToPixelsVec2D(const FVector2D& SlateUnits, FVector2D& Pixels)
+{
+    const float scale = GetViewportScale();
+    Pixels.X = SlateUnits.X * scale;
+    Pixels.Y = SlateUnits.Y * scale;
+}
+
+void UTimsToolkitBPLibrary::PixelsToSlateUnitsFloat(const float& Pixels, float& SlateUnits)
+{
+    const float scale = GetViewportScale();
+    if (scale > 0.0f)
+    {
+        SlateUnits = Pixels / scale;
+    }
+}
+
+void UTimsToolkitBPLibrary::PixelsToSlateUnitsVec2D(const FVector2D& Pixels, FVector2D& SlateUnits)
+{
+    const float scale = GetViewportScale();
+    if (scale > 0.0f)
+    {
+        SlateUnits.X = Pixels.X / scale;
+        SlateUnits.Y = Pixels.Y / scale;
+    }
+}
+
+// Based on https://answers.unrealengine.com/questions/120050/current-dpi-scaling.html#answer-216665
+float UTimsToolkitBPLibrary::GetViewportScale()
+{
+    FVector2D viewportSize;
+    GEngine->GameViewport->GetViewportSize(viewportSize);
+    
+    return GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass())->GetDPIScaleBasedOnSize(viewportSize.IntPoint());
 }
