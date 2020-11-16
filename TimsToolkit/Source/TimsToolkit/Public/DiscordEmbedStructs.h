@@ -28,10 +28,10 @@ struct FDiscordEmbed
         FString Content = "";
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (HideAlphaChannel))
-        FColor Color;
+        FLinearColor Color;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-        TArray<FDiscordEmbedField> Fields = {};
+        TArray<FDiscordEmbedField> Fields;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         FString Footer = "";

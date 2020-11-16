@@ -22,5 +22,5 @@ private:
 	static void ConstructEmbedJson(const FDiscordEmbed& Embed, FString& EmbedJson);
 	static void ConstructFieldJson(const FDiscordEmbedField& Field, FString& FieldJson);
 
-	static void ColorToInteger(const FColor& Color, FString& Integer);
+	static void ColorToInteger(const FLinearColor& Color, FString& Integer);
 };

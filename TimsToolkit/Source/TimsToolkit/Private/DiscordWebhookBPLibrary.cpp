@@ -6,6 +6,9 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 
+static constexpr int32 MAX_EMBEDS = 10;
+static constexpr int32 MAX_ATTACHMENTS = 10;
+
 UDiscordWebhookBPLibrary::UDiscordWebhookBPLibrary(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
@@ -17,8 +20,16 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
     FHttpModule& http = FHttpModule::Get();
     if (!http.IsHttpEnabled())
     {
-        UE_LOG(LogTemp, Warning, TEXT("HTTP is disabled!"));
+        UE_LOG(LogTemp, Warning, TEXT("Unable to send message to Discord webhook as HTTP is disabled!"));
+        return;
     }
+
+    if (Embeds.Num() == 0 && AttachmentPaths.Num() == 0 && MessageContent.IsEmpty())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Can't send an empty message!"));
+        return;
+    }
+
     
     // Make json string
     FString messageJson;
@@ -44,19 +55,20 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
         request->SetContent(content);
     }
 
-    if (!request->ProcessRequest())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Unable to start web request"));
-    }
-
     request->OnProcessRequestComplete().BindLambda([](FHttpRequestPtr /*Request*/, FHttpResponsePtr Response, bool ConnectedSuccessfully)
         {
-            if (!ConnectedSuccessfully)
+            if (!ConnectedSuccessfully || Response->GetResponseCode() >= 400)
             {
                 UE_LOG(LogTemp, Warning, TEXT("Issue while sending a message to a Discord webhook. Response: %s"), *Response->GetContentAsString());
+                UE_LOG(LogTemp, Warning, TEXT("Status code: %s"), *FString::FromInt(Response->GetResponseCode()));
             }
         }
     );
+
+    if (!request->ProcessRequest())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Unable to start web request for Discord webhook."));
+    }
 }
 
 void UDiscordWebhookBPLibrary::ConstructMessageJson(const FString& MessageContent, const TArray<FDiscordEmbed>& Embeds, const FString& Nickname, const FString& AvatarUrl, FString& MessageJson)
@@ -84,10 +96,15 @@ void UDiscordWebhookBPLibrary::ConstructMessageJson(const FString& MessageConten
     // Embeds
     if (Embeds.Num() > 0)
     {
+        if (Embeds.Num() > MAX_EMBEDS)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Trying to add too many embeds to a message. The maximum number of embeds is %s."), *FString::FromInt(MAX_EMBEDS));
+        }
+
         MessageJson += "\"embeds\": [";
 
         FString embedJson;
-        for (int i = 0; i < Embeds.Num(); ++i)
+        for (int i = 0; i < FMath::Min(Embeds.Num(), MAX_EMBEDS); ++i)
         {
             UDiscordWebhookBPLibrary::ConstructEmbedJson(Embeds[i], embedJson);
 
@@ -107,11 +124,18 @@ void UDiscordWebhookBPLibrary::ConstructMessageJson(const FString& MessageConten
 
 void UDiscordWebhookBPLibrary::ConstructMultipartContent(const TArray<FString>& AttachmentPaths, const FString& MessageJson, FString& ContentTypeHeader, TArray<uint8>& MultipartContent)
 {
+    if (AttachmentPaths.Num() > MAX_ATTACHMENTS)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Trying to add too many files to a message. The maximum number of files is %s."), *FString::FromInt(MAX_ATTACHMENTS));
+    }
+
     const FString boundary = "-----BOUNDARY-----";
     const FString midBoundary = "\r\n--" + boundary + "\r\n";
     const FString endBoundary = "\r\n--" + boundary + "--\r\n";
     
     ContentTypeHeader = "multipart/form-data; boundary=" + boundary;
+
+    uint8 addedAttachments = 0;
 
     for (int i = 0; i < AttachmentPaths.Num(); ++i)
     {
@@ -131,6 +155,12 @@ void UDiscordWebhookBPLibrary::ConstructMultipartContent(const TArray<FString>& 
 
         MultipartContent.Append((uint8*)TCHAR_TO_UTF8(*attachmentString), attachmentString.Len());
         MultipartContent.Append(rawData);
+
+        ++addedAttachments;
+        if (addedAttachments == MAX_ATTACHMENTS)
+        {
+            break;
+        }
     }
 
     if (MessageJson.Len() > 0)
@@ -217,10 +247,10 @@ void UDiscordWebhookBPLibrary::ConstructFieldJson(const FDiscordEmbedField& Fiel
     }
 }
 
-void UDiscordWebhookBPLibrary::ColorToInteger(const FColor& Color, FString& Integer)
+void UDiscordWebhookBPLibrary::ColorToInteger(const FLinearColor& Color, FString& Integer)
 {
     // Remove alpha from the color
-    FColor col2 = Color;
+    FColor col2 = Color.ToFColor(true);
     col2.A = 0;
 
     // Create integer string
