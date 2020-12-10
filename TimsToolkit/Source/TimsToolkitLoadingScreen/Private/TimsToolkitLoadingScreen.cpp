@@ -36,6 +36,8 @@ void FTimsToolkitLoadingScreenModule::StartupModule()
             GetMoviePlayer()->OnPrepareLoadingScreen().AddRaw(this, &FTimsToolkitLoadingScreenModule::BeginLoadingScreen);
         }
     }
+
+    FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &FTimsToolkitLoadingScreenModule::OnLevelLoaded);
 }
 
 void FTimsToolkitLoadingScreenModule::ShutdownModule()
@@ -57,11 +59,18 @@ void FTimsToolkitLoadingScreenModule::ShutdownModule()
 
 void FTimsToolkitLoadingScreenModule::BeginLoadingScreen()
 {
+    UWorld* world = CurrentWorld;
     // GWorld is used to create an instance of the loading screen widget.
     // TODO: Find a better way to create the widget
-    if (!GWorld)
+    if (!IsValid(world))
     {
-        return;
+        if (!GWorld)
+        {
+            UE_LOG(LogTemp, Error, TEXT("Unable to get world context for the loading screen!"));
+            return;
+        }
+
+        world = GWorld;
     }
 
     auto* settings = UTimsToolkitLoadingScreenSettings::Get();
@@ -75,13 +84,17 @@ void FTimsToolkitLoadingScreenModule::BeginLoadingScreen()
     
     int ind = FMath::RandRange(0, settings->m_LoadingScreenWidgets.Num() - 1);
 
-    UWorld* world = GWorld;
     UUserWidget* widget = CreateWidget(world, settings->m_LoadingScreenWidgets[ind]);
 
     loadingScreen.WidgetLoadingScreen = widget->TakeWidget();
     loadingScreen.MinimumLoadingScreenDisplayTime = 1.0f;
 
     GetMoviePlayer()->SetupLoadingScreen(loadingScreen);
+}
+
+void FTimsToolkitLoadingScreenModule::OnLevelLoaded(UWorld* LoadedWorld)
+{
+    CurrentWorld = LoadedWorld;
 }
 
 #undef LOCTEXT_NAMESPACE

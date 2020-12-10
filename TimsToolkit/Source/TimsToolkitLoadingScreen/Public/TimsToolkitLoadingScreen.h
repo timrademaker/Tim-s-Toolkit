@@ -13,4 +13,9 @@ public:
 	virtual void ShutdownModule() override;
 
 	void BeginLoadingScreen();
+
+	void OnLevelLoaded(UWorld* LoadedWorld);
+
+private:
+	UWorld* CurrentWorld = nullptr;
 };
