@@ -233,15 +233,20 @@ void UDiscordWebhookBPLibrary::ConstructFieldJson(const FDiscordEmbedField& Fiel
     {
         // name
         FieldJson = "{\"name\": \"" + Field.Name.ReplaceCharWithEscapedChar() + "\",";
+
         // value
         if (Field.Value.Len() > 0)
         {
-            FieldJson += "\"value\": \"" + Field.Value.ReplaceCharWithEscapedChar() + "\"";
+            FieldJson += "\"value\": \"" + Field.Value.ReplaceCharWithEscapedChar() + "\",";
         }
-        else
+
+        // inline
+        if (Field.Inline)
         {
-            FieldJson.RemoveFromEnd(",");
+            FieldJson += "\"inline\": true,";
         }
+        
+        FieldJson.RemoveFromEnd(",");
 
         FieldJson += "}";
     }

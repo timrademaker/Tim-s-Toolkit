@@ -13,6 +13,9 @@ struct FDiscordEmbedField
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         FString Value = "";
+        
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool Inline = false;
 };
 
 
