@@ -60,10 +60,10 @@ void FTimsToolkitLoadingScreenModule::ShutdownModule()
 void FTimsToolkitLoadingScreenModule::BeginLoadingScreen()
 {
     UWorld* world = CurrentWorld;
-    // GWorld is used to create an instance of the loading screen widget.
-    // TODO: Find a better way to create the widget
     if (!IsValid(world))
     {
+        // If the world pointer we have is not valid, try to use the global world pointer
+        // This should be avoided whenever possible
         if (!GWorld)
         {
             UE_LOG(LogTemp, Error, TEXT("Unable to get world context for the loading screen!"));
