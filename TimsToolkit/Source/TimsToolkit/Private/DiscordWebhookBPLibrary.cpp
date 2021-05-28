@@ -30,10 +30,12 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
         return;
     }
 
-    
     // Make json string
     FString messageJson;
     UDiscordWebhookBPLibrary::ConstructMessageJson(MessageContent, Embeds, Nickname, AvatarUrl, messageJson);
+
+    // Un-escape single quotation mark, because having it escaped causes issues for some reason
+    messageJson.ReplaceInline(TEXT("\\\'"), TEXT("\'"));
 
     // Send
     TSharedRef <IHttpRequest> request = http.CreateRequest();
