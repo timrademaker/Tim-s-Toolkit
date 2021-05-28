@@ -11,7 +11,7 @@ public class TimsToolkit : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -29,6 +29,17 @@ public class TimsToolkit : ModuleRules
 			}
 			);
 
+		if(Target.Type == TargetType.Editor)
+        {
+			PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"BlueprintGraph",
+				"GraphEditor",
+				"UnrealEd"
+			}
+			);
+		}
 
 		if (Target.Type == TargetRules.TargetType.Editor)
 		{
