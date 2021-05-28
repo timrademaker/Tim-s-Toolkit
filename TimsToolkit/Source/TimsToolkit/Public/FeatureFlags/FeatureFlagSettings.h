@@ -1,0 +1,30 @@
+#pragma once
+
+#include "Engine/DeveloperSettings.h"
+
+#include "FeatureFlagSettings.generated.h"
+
+
+UCLASS(Config=Game, defaultconfig, meta = (DisplayName = "Feature Flags"))
+class TIMSTOOLKIT_API UFeatureFlagSettings : public UDeveloperSettings
+{
+    GENERATED_BODY()
+
+public:
+    static UFeatureFlagSettings* Get();
+
+    /**
+     * Key: The name of the feature
+     * Value: Whether the feature is enabled or not
+     */
+    UPROPERTY(Config, EditAnywhere, Category = "Feature Flags")
+    TMap<FName, bool> FeatureFlags;
+
+    /** Whether features are considered enabled or not if they can't be found in the existing feature flags */
+    UPROPERTY(Config, EditAnywhere, Category = "Feature Flags")
+    bool bDefaultFeatureState;
+
+private:
+    static UFeatureFlagSettings* FeatureFlagSettingsSingleton;
+
+};
