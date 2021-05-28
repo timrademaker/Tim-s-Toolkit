@@ -25,13 +25,13 @@ void FTimsToolkitLoadingScreenModule::StartupModule()
     ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
     if (SettingsModule)
     {
-        SettingsModule->RegisterSettings("Project", "Plugins", "Tim's Toolkit", LOCTEXT("TimsToolkitName", "Tim's Toolkit"), LOCTEXT("TimsToolkitDescription", "Tim's Toolkit settings"), UTimsToolkitLoadingScreenSettings::Get());
+        SettingsModule->RegisterSettings("Project", "Plugins", "Tim's Toolkit Loading Screen", LOCTEXT("TimsToolkitName", "Tim's Toolkit - Loading Screen"), LOCTEXT("TimsToolkitDescription", "Tim's Toolkit Loading Screen settings"), UTimsToolkitLoadingScreenSettings::Get());
     }
 #endif
     
     if (!IsRunningDedicatedServer() && FSlateApplication::IsInitialized())
     {
-        if (IsMoviePlayerEnabled() && UTimsToolkitLoadingScreenSettings::Get()->m_LoadingScreenWidgets.Num() > 0)
+        if (IsMoviePlayerEnabled() && UTimsToolkitLoadingScreenSettings::Get()->LoadingScreenWidgets.Num() > 0)
         {
             GetMoviePlayer()->OnPrepareLoadingScreen().AddRaw(this, &FTimsToolkitLoadingScreenModule::BeginLoadingScreen);
         }
@@ -82,9 +82,9 @@ void FTimsToolkitLoadingScreenModule::BeginLoadingScreen()
     FLoadingScreenAttributes loadingScreen;
     loadingScreen.bAutoCompleteWhenLoadingCompletes = true;
     
-    int ind = FMath::RandRange(0, settings->m_LoadingScreenWidgets.Num() - 1);
+    int ind = FMath::RandRange(0, settings->LoadingScreenWidgets.Num() - 1);
 
-    UUserWidget* widget = CreateWidget(world, settings->m_LoadingScreenWidgets[ind]);
+    UUserWidget* widget = CreateWidget(world, settings->LoadingScreenWidgets[ind]);
 
     loadingScreen.WidgetLoadingScreen = widget->TakeWidget();
     loadingScreen.MinimumLoadingScreenDisplayTime = 1.0f;

@@ -2,22 +2,22 @@
 
 #include "UObject/UObjectGlobals.h"
 
-UTimsToolkitLoadingScreenSettings* UTimsToolkitLoadingScreenSettings::m_EditorSettingsSingleton = nullptr;
+UTimsToolkitLoadingScreenSettings* UTimsToolkitLoadingScreenSettings::LoadingScreenEditorSettingsSingleton = nullptr;
 
 
 UTimsToolkitLoadingScreenSettings* UTimsToolkitLoadingScreenSettings::Get()
 {
-    if (!m_EditorSettingsSingleton)
+    if (!LoadingScreenEditorSettingsSingleton)
     {
         static const TCHAR* settingsContainerName = TEXT("TimsToolkitLoadingScreenSettingsContainer");
-        m_EditorSettingsSingleton = FindObject<UTimsToolkitLoadingScreenSettings>(GetTransientPackage(), settingsContainerName);
+        LoadingScreenEditorSettingsSingleton = FindObject<UTimsToolkitLoadingScreenSettings>(GetTransientPackage(), settingsContainerName);
 
-        if (!m_EditorSettingsSingleton)
+        if (!LoadingScreenEditorSettingsSingleton)
         {
-            m_EditorSettingsSingleton = NewObject<UTimsToolkitLoadingScreenSettings>(GetTransientPackage(), UTimsToolkitLoadingScreenSettings::StaticClass(), settingsContainerName);
-            m_EditorSettingsSingleton->AddToRoot();
+            LoadingScreenEditorSettingsSingleton = NewObject<UTimsToolkitLoadingScreenSettings>(GetTransientPackage(), UTimsToolkitLoadingScreenSettings::StaticClass(), settingsContainerName);
+            LoadingScreenEditorSettingsSingleton->AddToRoot();
         }
     }
 
-    return m_EditorSettingsSingleton;
+    return LoadingScreenEditorSettingsSingleton;
 }
