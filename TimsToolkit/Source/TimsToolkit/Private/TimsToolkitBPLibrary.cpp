@@ -23,6 +23,15 @@ bool UTimsToolkitBPLibrary::IsEditor()
 #endif
 }
 
+bool UTimsToolkitBPLibrary::IsShippingBuild()
+{
+#if UE_BUILD_SHIPPING
+    return true;
+#else
+    return false;
+#endif
+}
+
 void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter)
 {
     if (!WorldContextObject)

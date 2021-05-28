@@ -13,6 +13,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Is Editor", Tooltip = "Returns true if the function is executed from the editor", Category = "Tim's Toolkit"))
 	static bool IsEditor();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (Tooltip = "Returns true if the function is executed from a shipping build", Category = "Tim's Toolkit"))
+	static bool IsShippingBuild();
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, meta = (DisplayName = "Get World Extent", Tooltip = "Gets the world dimensions", Category = "Tim's Toolkit", AutoCreateRefTerm = "IgnoreMaximumExtentsForClasses"))
 	static void GetWorldExtent(const AActor* WorldContextObject, const FVector MaximumObjectExtents, const TArray<TSubclassOf<AActor>> IgnoreMaximumExtentsForClasses, FVector& WorldExtent, FVector& WorldCenter);
 
