@@ -20,8 +20,7 @@ bool UFeatureFlagFunctionLibrary::IsFeatureEnabled(const FName& FeatureName)
     }
     else
     {
-        // TODO: Tim's Toolkit logger cat
-        UE_LOG(LogTemp, Warning, TEXT("Unable to find feature with name \"%s\""), &FeatureName);
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Unable to find feature flag for feature with name \"%s\""), *FeatureName.ToString());
         return settings->bDefaultFeatureState;
     }
 }

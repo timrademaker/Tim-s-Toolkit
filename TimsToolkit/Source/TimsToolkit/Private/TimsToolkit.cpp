@@ -17,3 +17,4 @@ void FTimsToolkitModule::ShutdownModule()
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FTimsToolkitModule, TimsToolkit)
+DEFINE_LOG_CATEGORY(LogTimsToolkit);

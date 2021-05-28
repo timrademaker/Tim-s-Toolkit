@@ -20,13 +20,13 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
     FHttpModule& http = FHttpModule::Get();
     if (!http.IsHttpEnabled())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Unable to send message to Discord webhook as HTTP is disabled!"));
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Unable to send message to Discord webhook as HTTP is disabled!"));
         return;
     }
 
     if (Embeds.Num() == 0 && AttachmentPaths.Num() == 0 && MessageContent.IsEmpty())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Can't send an empty message!"));
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Can't send an empty message!"));
         return;
     }
 
@@ -61,15 +61,15 @@ void UDiscordWebhookBPLibrary::SendMessageToDiscordWebhook(const FString& Webhoo
         {
             if (!ConnectedSuccessfully || Response->GetResponseCode() >= 400)
             {
-                UE_LOG(LogTemp, Warning, TEXT("Issue while sending a message to a Discord webhook. Response: %s"), *Response->GetContentAsString());
-                UE_LOG(LogTemp, Warning, TEXT("Status code: %s"), *FString::FromInt(Response->GetResponseCode()));
+                UE_LOG(LogTimsToolkit, Warning, TEXT("Issue while sending a message to a Discord webhook. Response: %s"), *Response->GetContentAsString());
+                UE_LOG(LogTimsToolkit, Warning, TEXT("Status code: %s"), *FString::FromInt(Response->GetResponseCode()));
             }
         }
     );
 
     if (!request->ProcessRequest())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Unable to start web request for Discord webhook."));
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Unable to start web request for Discord webhook."));
     }
 }
 
@@ -100,7 +100,7 @@ void UDiscordWebhookBPLibrary::ConstructMessageJson(const FString& MessageConten
     {
         if (Embeds.Num() > MAX_EMBEDS)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Trying to add too many embeds to a message. The maximum number of embeds is %s."), *FString::FromInt(MAX_EMBEDS));
+            UE_LOG(LogTimsToolkit, Warning, TEXT("Trying to add too many embeds to a message. The maximum number of embeds is %s."), *FString::FromInt(MAX_EMBEDS));
         }
 
         MessageJson += "\"embeds\": [";
@@ -128,7 +128,7 @@ void UDiscordWebhookBPLibrary::ConstructMultipartContent(const TArray<FString>& 
 {
     if (AttachmentPaths.Num() > MAX_ATTACHMENTS)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Trying to add too many files to a message. The maximum number of files is %s."), *FString::FromInt(MAX_ATTACHMENTS));
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Trying to add too many files to a message. The maximum number of files is %s."), *FString::FromInt(MAX_ATTACHMENTS));
     }
 
     const FString boundary = "-----BOUNDARY-----";

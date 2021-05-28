@@ -27,7 +27,7 @@ void UTimsToolkitBPLibrary::GetWorldExtent(const AActor* WorldContextObject, con
 {
     if (!WorldContextObject)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid world context object!"));
+        UE_LOG(LogTimsToolkit, Warning, TEXT("Invalid world context object!"));
         return;
     }
 
