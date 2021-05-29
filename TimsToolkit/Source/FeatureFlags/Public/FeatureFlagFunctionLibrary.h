@@ -4,14 +4,6 @@
 
 #include "FeatureFlagFunctionLibrary.generated.h"
 
-UENUM(BlueprintType)
-enum class EFeatureState : uint8
-{
-    Enabled,
-    Disabled
-};
-
-
 UCLASS()
 class UFeatureFlagFunctionLibrary : public UBlueprintFunctionLibrary
 {
