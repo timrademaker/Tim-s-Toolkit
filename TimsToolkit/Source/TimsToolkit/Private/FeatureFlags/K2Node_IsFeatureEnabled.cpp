@@ -103,7 +103,7 @@ void UK2Node_IsFeatureEnabled::ExpandNode(FKismetCompilerContext& CompilerContex
 	// Create a node to check if the selected feature is enabled
 	const FName isFeatureEnabledFunctionName = GET_FUNCTION_NAME_CHECKED(UFeatureFlagFunctionLibrary, IsFeatureEnabled);
 	UK2Node_CallFunction* isFeatureEnabledFunction = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
-	isFeatureEnabledFunction->FunctionReference.SetExternalMember(isFeatureEnabledFunctionName, UBlueprintMapLibrary::StaticClass());
+	isFeatureEnabledFunction->FunctionReference.SetExternalMember(isFeatureEnabledFunctionName, UFeatureFlagFunctionLibrary::StaticClass());
 	isFeatureEnabledFunction->AllocateDefaultPins();
 	// No need to connect exec pin to isFeatureEnabledFunction, as it's a pure node
 
