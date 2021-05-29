@@ -26,7 +26,7 @@
 			"LoadingPhase": "PreDefault"
 		},
 		{
-			"Name": "FeatureFlags",
+			"Name": "TimsToolkitNodes",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "PreDefault"
 		}

@@ -1,6 +1,6 @@
 #include "SGraphPinFeatureName.h"
 
-#include "FeatureFlagSettings.h"
+#include "FeatureFlags/FeatureFlagSettings.h"
 
 
 void SGraphPinFeatureName::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

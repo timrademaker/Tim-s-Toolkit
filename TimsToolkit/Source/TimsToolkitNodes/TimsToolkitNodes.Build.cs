@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class FeatureFlags : ModuleRules
+public class TimsToolkitNodes : ModuleRules
 {
-	public FeatureFlags(ReadOnlyTargetRules Target) : base(Target)
+	public TimsToolkitNodes(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -15,7 +15,8 @@ public class FeatureFlags : ModuleRules
 				"BlueprintGraph",
 				"GraphEditor",
 				"UnrealEd",
-				"KismetCompiler"
+				"KismetCompiler",
+				"TimsToolkit"
 			}
 		);
 			
@@ -26,24 +27,8 @@ public class FeatureFlags : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
-				"HTTP"
+				"SlateCore"
 			}
 		);
-
-		if (Target.Type == TargetRules.TargetType.Editor)
-		{
-			PublicIncludePathModuleNames.AddRange(
-				new string[] {
-					"Settings"
-				}
-			);
-
-			DynamicallyLoadedModuleNames.AddRange(
-				new string[] {
-					"Settings"
-				}
-			);
-		}
 	}
 }

@@ -2,8 +2,8 @@
 
 
 #include "K2Node_IsFeatureEnabled.h"
-#include "FeatureFlagSettings.h"
-#include "FeatureFlagFunctionLibrary.h"
+#include "FeatureFlags/FeatureFlagSettings.h"
+#include "FeatureFlags/FeatureFlagFunctionLibrary.h"
 
 #include "BlueprintNodeSpawner.h"
 #include "BlueprintActionDatabaseRegistrar.h"

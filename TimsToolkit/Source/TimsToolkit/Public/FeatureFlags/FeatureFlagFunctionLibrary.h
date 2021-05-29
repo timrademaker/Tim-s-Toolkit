@@ -5,7 +5,7 @@
 #include "FeatureFlagFunctionLibrary.generated.h"
 
 UCLASS()
-class UFeatureFlagFunctionLibrary : public UBlueprintFunctionLibrary
+class TIMSTOOLKIT_API UFeatureFlagFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 

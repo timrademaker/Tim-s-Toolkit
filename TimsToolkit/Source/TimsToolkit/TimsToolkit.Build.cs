@@ -12,7 +12,6 @@ public class TimsToolkit : ModuleRules
 			new string[]
 			{
 				"Core"
-				// ... add other public dependencies that you statically link with here ...
 			}
 		);
 			
@@ -25,8 +24,22 @@ public class TimsToolkit : ModuleRules
 				"Slate",
 				"SlateCore",
 				"HTTP",
-				// ... add private dependencies that you statically link with here ...	
 			}
 		);
+
+		if (Target.Type == TargetType.Editor)
+		{
+			PublicIncludePathModuleNames.AddRange(
+				new string[] {
+					"Settings"
+				}
+			);
+
+			DynamicallyLoadedModuleNames.AddRange(
+				new string[] {
+					"Settings"
+				}
+			);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-#include "FeatureFlagSettings.h"
+#include "FeatureFlags/FeatureFlagSettings.h"
 
 #include "UObject/UObjectGlobals.h"
 

@@ -9,7 +9,7 @@ class UFeatureFlagSettings;
 DECLARE_EVENT(UFeatureFlagSettings, FFeatureFlagMapChanged);
 
 UCLASS(Config=Game, defaultconfig, meta = (DisplayName = "Feature Flags"))
-class FEATUREFLAGS_API UFeatureFlagSettings : public UDeveloperSettings
+class TIMSTOOLKIT_API UFeatureFlagSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
 

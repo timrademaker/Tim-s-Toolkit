@@ -4,9 +4,9 @@
 
 #include "IsFeatureEnabledPinFactory.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogFeatureFlags, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogTimsToolkitNodes, Log, All);
 
-class FFeatureFlagsModule : public IModuleInterface
+class FTimsToolkitNodesModule : public IModuleInterface
 {
 public:
 
