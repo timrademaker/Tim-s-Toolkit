@@ -1,6 +1,7 @@
-#include "FeatureFlags/FeatureFlagFunctionLibrary.h"
+#include "FeatureFlagFunctionLibrary.h"
 
-#include "FeatureFlags/FeatureFlagSettings.h"
+#include "FeatureFlags.h"
+#include "FeatureFlagSettings.h"
 
 UFeatureFlagFunctionLibrary::UFeatureFlagFunctionLibrary(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -20,7 +21,7 @@ bool UFeatureFlagFunctionLibrary::IsFeatureEnabled(const FName& FeatureName)
     }
     else
     {
-        UE_LOG(LogTimsToolkit, Warning, TEXT("Unable to find feature flag for feature with name \"%s\""), *FeatureName.ToString());
+        UE_LOG(LogFeatureFlags, Warning, TEXT("Unable to find feature flag for feature with name \"%s\""), *FeatureName.ToString());
         return settings->bDefaultFeatureState;
     }
 }

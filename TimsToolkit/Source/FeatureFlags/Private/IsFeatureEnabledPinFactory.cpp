@@ -1,7 +1,7 @@
-#include "FeatureFlags/IsFeatureEnabledPinFactory.h"
+#include "IsFeatureEnabledPinFactory.h"
 
-#include "FeatureFlags/K2Node_IsFeatureEnabled.h"
-#include "FeatureFlags/SGraphPinFeatureName.h"
+#include "K2Node_IsFeatureEnabled.h"
+#include "SGraphPinFeatureName.h"
 
 #include "EdGraphSchema_K2.h"
 #include "SGraphPin.h"

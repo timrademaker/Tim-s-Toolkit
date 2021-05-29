@@ -14,7 +14,7 @@ public class TimsToolkit : ModuleRules
 				"Core"
 				// ... add other public dependencies that you statically link with here ...
 			}
-			);
+		);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
@@ -27,34 +27,6 @@ public class TimsToolkit : ModuleRules
 				"HTTP",
 				// ... add private dependencies that you statically link with here ...	
 			}
-			);
-
-		if(Target.Type == TargetType.Editor)
-        {
-			PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"BlueprintGraph",
-				"GraphEditor",
-				"UnrealEd",
-				"KismetCompiler"
-			}
-			);
-		}
-
-		if (Target.Type == TargetRules.TargetType.Editor)
-		{
-			PublicIncludePathModuleNames.AddRange(
-				new string[] {
-					"Settings"
-				}
-			);
-
-			DynamicallyLoadedModuleNames.AddRange(
-				new string[] {
-					"Settings"
-				}
-			);
-		}
+		);
 	}
 }

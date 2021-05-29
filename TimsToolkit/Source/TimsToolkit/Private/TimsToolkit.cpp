@@ -6,14 +6,12 @@
 
 void FTimsToolkitModule::StartupModule()
 {
-	IsFeatureEnabledPinFactory = MakeShareable(new FIsFeatureEnabledPinFactory());
-	FEdGraphUtilities::RegisterVisualPinFactory(IsFeatureEnabledPinFactory);
 	
 }
 
 void FTimsToolkitModule::ShutdownModule()
 {
-	FEdGraphUtilities::UnregisterVisualPinFactory(IsFeatureEnabledPinFactory);
+	
 }
 
 #undef LOCTEXT_NAMESPACE

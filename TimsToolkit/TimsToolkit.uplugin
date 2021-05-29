@@ -24,6 +24,11 @@
 			"Name": "TimsToolkitLoadingScreen",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "FeatureFlags",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }

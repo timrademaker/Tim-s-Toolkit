@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "FeatureFlags/K2Node_IsFeatureEnabled.h"
-#include "FeatureFlags/FeatureFlagSettings.h"
-#include "FeatureFlags/FeatureFlagFunctionLibrary.h"
+#include "K2Node_IsFeatureEnabled.h"
+#include "FeatureFlagSettings.h"
+#include "FeatureFlagFunctionLibrary.h"
 
 #include "BlueprintNodeSpawner.h"
 #include "BlueprintActionDatabaseRegistrar.h"
