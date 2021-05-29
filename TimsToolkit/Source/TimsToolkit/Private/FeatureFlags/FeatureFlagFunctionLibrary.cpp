@@ -24,7 +24,3 @@ bool UFeatureFlagFunctionLibrary::IsFeatureEnabled(const FName& FeatureName)
         return settings->bDefaultFeatureState;
     }
 }
-void UFeatureFlagFunctionLibrary::IsFeatureEnabled_SplitExecution(const FName FeatureName, EFeatureState& OutBranch)
-{
-    OutBranch = IsFeatureEnabled(FeatureName) ? EFeatureState::Enabled : EFeatureState::Disabled;
-}
