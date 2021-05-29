@@ -30,5 +30,8 @@ private:
 	virtual void EarlyValidation(class FCompilerResultsLog& MessageLog) const override;
 	//~ End UK2Node Interface
 
-    void UpdateFeatureNameOptions();	
+	UEdGraphPin* GetFeatureEnabledPin();
+	UEdGraphPin* GetFeatureDisabledPin();
+
+    void UpdateFeatureNameOptions();
 };

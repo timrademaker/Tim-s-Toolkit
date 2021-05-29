@@ -36,7 +36,8 @@ public class TimsToolkit : ModuleRules
 			{
 				"BlueprintGraph",
 				"GraphEditor",
-				"UnrealEd"
+				"UnrealEd",
+				"KismetCompiler"
 			}
 			);
 		}
