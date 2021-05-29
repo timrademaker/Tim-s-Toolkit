@@ -44,7 +44,6 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 {
 	Super::EarlyValidation(MessageLog);
 	
-	// TODO: Make sure that the selected feature is valid
 	const UEdGraphPin* featureNamePin = GetFeatureNamePin();
 	if (!featureNamePin)
 	{

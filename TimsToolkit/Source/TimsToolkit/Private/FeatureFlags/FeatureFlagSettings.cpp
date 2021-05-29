@@ -21,3 +21,16 @@ UFeatureFlagSettings* UFeatureFlagSettings::Get()
 
     return FeatureFlagSettingsSingleton;
 }
+
+void UFeatureFlagSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+    Super::PostEditChangeProperty(PropertyChangedEvent);
+
+    if (PropertyChangedEvent.GetPropertyName() == FName(TEXT("FeatureFlags")))
+    {
+        if ((PropertyChangedEvent.ChangeType &= EPropertyChangeType::ValueSet) != 0)
+        {
+            FeatureFlagMapChanged.Broadcast();
+        }
+    }
+}

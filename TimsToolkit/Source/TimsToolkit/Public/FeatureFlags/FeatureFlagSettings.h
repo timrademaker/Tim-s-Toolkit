@@ -4,6 +4,9 @@
 
 #include "FeatureFlagSettings.generated.h"
 
+class UFeatureFlagSettings;
+
+DECLARE_EVENT(UFeatureFlagSettings, FFeatureFlagMapChanged);
 
 UCLASS(Config=Game, defaultconfig, meta = (DisplayName = "Feature Flags"))
 class TIMSTOOLKIT_API UFeatureFlagSettings : public UDeveloperSettings
@@ -13,6 +16,12 @@ class TIMSTOOLKIT_API UFeatureFlagSettings : public UDeveloperSettings
 public:
     static UFeatureFlagSettings* Get();
 
+    FORCEINLINE FFeatureFlagMapChanged& OnFeatureFlagMapChanged()
+    {
+        return FeatureFlagMapChanged;
+    }
+
+public:
     /**
      * Key: The name of the feature
      * Value: Whether the feature is enabled or not
@@ -25,6 +34,10 @@ public:
     bool bDefaultFeatureState;
 
 private:
+    virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+
+private:
     static UFeatureFlagSettings* FeatureFlagSettingsSingleton;
 
+    FFeatureFlagMapChanged FeatureFlagMapChanged;
 };

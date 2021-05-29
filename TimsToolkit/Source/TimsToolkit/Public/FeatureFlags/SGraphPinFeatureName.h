@@ -18,6 +18,7 @@ public:
 
 protected:
 	void RefreshNameList();
-};
 
-// TODO: Make sure RefreshNameList is called when the feature list is updated
+private:
+	FDelegateHandle OnFeatureFlagMapChangedDelegateHandle;
+};
