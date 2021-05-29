@@ -45,15 +45,18 @@ void SGraphPinFeatureName::RefreshNameList()
     {
         TSharedPtr<FName> selectedName = ComboBox->GetSelectedItem();
 
-        TSharedPtr<FName>* foundName = NameList.FindByPredicate([selectedName](TSharedPtr<FName> Name)
-            {
-                return Name->IsEqual(*selectedName);
-            }
-        );
-
-        if (foundName)
+        if (selectedName)
         {
-            ComboBox->SetSelectedItem(*foundName);
+            TSharedPtr<FName>* foundName = NameList.FindByPredicate([selectedName](TSharedPtr<FName> Name)
+                {
+                    return Name->IsEqual(*selectedName);
+                }
+            );
+
+            if (foundName)
+            {
+                ComboBox->SetSelectedItem(*foundName);
+            }
         }
     }
 }
