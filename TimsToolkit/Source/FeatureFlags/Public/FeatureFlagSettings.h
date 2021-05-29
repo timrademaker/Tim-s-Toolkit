@@ -34,7 +34,9 @@ public:
     bool bDefaultFeatureState;
 
 private:
+#if WITH_EDITOR
     virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 private:
     static UFeatureFlagSettings* FeatureFlagSettingsSingleton;

@@ -22,6 +22,7 @@ UFeatureFlagSettings* UFeatureFlagSettings::Get()
     return FeatureFlagSettingsSingleton;
 }
 
+#if WITH_EDITOR
 void UFeatureFlagSettings::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
     Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -34,3 +35,4 @@ void UFeatureFlagSettings::PostEditChangeProperty(FPropertyChangedEvent& Propert
         }
     }
 }
+#endif
