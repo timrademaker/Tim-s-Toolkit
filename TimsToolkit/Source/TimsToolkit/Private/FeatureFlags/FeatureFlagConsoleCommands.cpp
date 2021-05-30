@@ -1,11 +1,13 @@
 #include "FeatureFlags/FeatureFlagConsoleCommands.h"
 
+FFeatureStateChanged FFeatureFlagConsoleCommands::OnFeatureStateChanged;
+
 #if !UE_BUILD_SHIPPING
 #include "FeatureFlags/FeatureFlagSettings.h"
 
 #include "HAL/IConsoleManager.h"
 
-static void SetFeatureEnabled(const TArray<FString>& Args)
+void FFeatureFlagConsoleCommands::SetFeatureEnabled(const TArray<FString>& Args)
 {
     const int32 numArgs = Args.Num();
 
@@ -36,6 +38,11 @@ static void SetFeatureEnabled(const TArray<FString>& Args)
 
         if(featureCurrentlyEnabledPtr)
         {
+            if (*featureCurrentlyEnabledPtr != newEnabled)
+            {
+                OnFeatureStateChanged.Broadcast(featureName, newEnabled);
+            }
+
             *featureCurrentlyEnabledPtr = newEnabled;
             UE_LOG(LogTimsToolkit, Log, TEXT("Successfully %s '%s'"), newEnabled ? TEXT("enabled") : TEXT("disabled"), *featureName.ToString());
         }
@@ -49,7 +56,7 @@ static void SetFeatureEnabled(const TArray<FString>& Args)
 FAutoConsoleCommand SetFeatureEnabledCmd(
     TEXT("features.SetFeatureEnabled"),
     TEXT("Enable or disable a feature flag. Arguments: FeatureName [EnabledState]"),
-    FConsoleCommandWithArgsDelegate::CreateStatic(&SetFeatureEnabled)
+    FConsoleCommandWithArgsDelegate::CreateStatic(&FFeatureFlagConsoleCommands::SetFeatureEnabled)
 );
 
 #endif
