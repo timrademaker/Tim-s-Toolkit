@@ -11,10 +11,9 @@ public class TimsToolkit : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
-				// ... add other public dependencies that you statically link with here ...
+				"Core"
 			}
-			);
+		);
 			
 		
 		PrivateDependencyModuleNames.AddRange(
@@ -25,12 +24,10 @@ public class TimsToolkit : ModuleRules
 				"Slate",
 				"SlateCore",
 				"HTTP",
-				// ... add private dependencies that you statically link with here ...	
 			}
-			);
+		);
 
-
-		if (Target.Type == TargetRules.TargetType.Editor)
+		if (Target.Type == TargetType.Editor)
 		{
 			PublicIncludePathModuleNames.AddRange(
 				new string[] {

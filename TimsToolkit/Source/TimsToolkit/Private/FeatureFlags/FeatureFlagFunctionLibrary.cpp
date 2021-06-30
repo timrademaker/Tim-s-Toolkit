@@ -1,6 +1,7 @@
 #include "FeatureFlags/FeatureFlagFunctionLibrary.h"
 
 #include "FeatureFlags/FeatureFlagSettings.h"
+#include "TimsToolkit.h"
 
 UFeatureFlagFunctionLibrary::UFeatureFlagFunctionLibrary(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -23,8 +24,4 @@ bool UFeatureFlagFunctionLibrary::IsFeatureEnabled(const FName& FeatureName)
         UE_LOG(LogTimsToolkit, Warning, TEXT("Unable to find feature flag for feature with name \"%s\""), *FeatureName.ToString());
         return settings->bDefaultFeatureState;
     }
-}
-void UFeatureFlagFunctionLibrary::IsFeatureEnabled_SplitExecution(const FName FeatureName, EFeatureState& OutBranch)
-{
-    OutBranch = IsFeatureEnabled(FeatureName) ? EFeatureState::Enabled : EFeatureState::Disabled;
 }

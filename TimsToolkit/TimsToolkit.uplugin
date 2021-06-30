@@ -24,6 +24,11 @@
 			"Name": "TimsToolkitLoadingScreen",
 			"Type": "Runtime",
 			"LoadingPhase": "PreDefault"
+		},
+		{
+			"Name": "TimsToolkitNodes",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "PreDefault"
 		}
 	]
 }
