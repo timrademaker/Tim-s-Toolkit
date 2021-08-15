@@ -47,7 +47,7 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 	const UEdGraphPin* featureNamePin = GetFeatureNamePin();
 	if (!featureNamePin)
 	{
-		MessageLog.Error(TEXT("Missing FeatureName pin"), this);
+		MessageLog.Error(TEXT("Missing FeatureName pin! @@"), this);
 		return;
 	}
 
@@ -65,7 +65,7 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 			if (!settings->FeatureFlags.Contains(FName(featureName)))
 			{
 				const FString msg = FText::Format(
-					FText::FromString("'{0}' is not a valid feature name!"),
+					FText::FromString("'{0}' is not a valid feature name! @@"),
 					FText::FromString(featureName)
 				).ToString();
 
