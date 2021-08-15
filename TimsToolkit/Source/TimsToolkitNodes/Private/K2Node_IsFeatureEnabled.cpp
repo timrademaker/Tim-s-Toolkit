@@ -57,24 +57,21 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 	{	
 		const UEdGraphNode* linkedOuter = featureNamePin->LinkedTo[0]->GetOuter();
 		auto* linkedInputPin = linkedOuter->FindPin(TEXT("Value"), EEdGraphPinDirection::EGPD_Input);
-		if (!linkedInputPin)
+		if (linkedInputPin && linkedInputPin->LinkedTo.Num() == 0)
 		{
-			// The input pin is probably a variable
-			linkedInputPin = featureNamePin->LinkedTo[0];
-			// TODO: Get the variable's value
-		}
-		const FString featureName = linkedInputPin->DefaultValue;
+			const FString featureName = linkedInputPin->DefaultValue;
 
-		UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
-		if (!settings->FeatureFlags.Contains(FName(featureName)))
-		{
-			const FString msg = FText::Format(
-				FText::FromString("'{0}' is not a valid feature name!"),
-				FText::FromString(featureName)
-			).ToString();
+			UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
+			if (!settings->FeatureFlags.Contains(FName(featureName)))
+			{
+				const FString msg = FText::Format(
+					FText::FromString("'{0}' is not a valid feature name!"),
+					FText::FromString(featureName)
+				).ToString();
 
-			MessageLog.Error(*msg, this);
-			return;
+				MessageLog.Error(*msg, this);
+				return;
+			}
 		}
 	}
 }
