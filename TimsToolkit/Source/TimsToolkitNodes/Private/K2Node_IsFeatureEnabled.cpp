@@ -47,23 +47,31 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 	const UEdGraphPin* featureNamePin = GetFeatureNamePin();
 	if (!featureNamePin)
 	{
-		MessageLog.Error(TEXT("Missing FeatureName pin"), this);
+		MessageLog.Error(TEXT("Missing FeatureName pin! @@"), this);
 		return;
 	}
 
-	if (featureNamePin->LinkedTo.Num() > 0)
-	{
-		const FString featureName = featureNamePin->LinkedTo[0]->GetDefaultAsString();
-		UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
-		if (!settings->FeatureFlags.Contains(FName(featureName)))
-		{
-			const FString msg = FText::Format(
-				FText::FromString("'{0}' is not a valid feature name!"),
-				FText::FromString(featureName)
-			).ToString();
+	const UEdGraphPin* execPin = GetExecPin();
 
-			MessageLog.Error(*msg, this);
-			return;
+	if (featureNamePin->LinkedTo.Num() > 0 && execPin != nullptr && execPin->LinkedTo.Num() > 0)
+	{	
+		const UEdGraphNode* linkedOuter = featureNamePin->LinkedTo[0]->GetOuter();
+		auto* linkedInputPin = linkedOuter->FindPin(TEXT("Value"), EEdGraphPinDirection::EGPD_Input);
+		if (linkedInputPin && linkedInputPin->LinkedTo.Num() == 0)
+		{
+			const FString featureName = linkedInputPin->DefaultValue;
+
+			UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
+			if (!settings->FeatureFlags.Contains(FName(featureName)))
+			{
+				const FString msg = FText::Format(
+					FText::FromString("'{0}' is not a valid feature name! @@"),
+					FText::FromString(featureName)
+				).ToString();
+
+				MessageLog.Error(*msg, this);
+				return;
+			}
 		}
 	}
 }
