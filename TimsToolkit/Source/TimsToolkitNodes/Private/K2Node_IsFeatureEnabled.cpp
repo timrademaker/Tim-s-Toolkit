@@ -51,8 +51,10 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 		return;
 	}
 
-	if (featureNamePin->LinkedTo.Num() > 0)
-	{
+	const UEdGraphPin* execPin = GetExecPin();
+
+	if (featureNamePin->LinkedTo.Num() > 0 && execPin != nullptr && execPin->LinkedTo.Num() > 0)
+	{	
 		const FString featureName = featureNamePin->LinkedTo[0]->GetDefaultAsString();
 		UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
 		if (!settings->FeatureFlags.Contains(FName(featureName)))
