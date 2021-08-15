@@ -55,7 +55,16 @@ void UK2Node_IsFeatureEnabled::EarlyValidation(FCompilerResultsLog& MessageLog) 
 
 	if (featureNamePin->LinkedTo.Num() > 0 && execPin != nullptr && execPin->LinkedTo.Num() > 0)
 	{	
-		const FString featureName = featureNamePin->LinkedTo[0]->GetDefaultAsString();
+		const UEdGraphNode* linkedOuter = featureNamePin->LinkedTo[0]->GetOuter();
+		auto* linkedInputPin = linkedOuter->FindPin(TEXT("Value"), EEdGraphPinDirection::EGPD_Input);
+		if (!linkedInputPin)
+		{
+			// The input pin is probably a variable
+			linkedInputPin = featureNamePin->LinkedTo[0];
+			// TODO: Get the variable's value
+		}
+		const FString featureName = linkedInputPin->DefaultValue;
+
 		UFeatureFlagSettings* settings = UFeatureFlagSettings::Get();
 		if (!settings->FeatureFlags.Contains(FName(featureName)))
 		{
